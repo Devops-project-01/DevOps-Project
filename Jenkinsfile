@@ -47,7 +47,12 @@ echo "Terraform action is –> ${action}"
 sh ("terraform ${action} --auto-approve")
 }
 }
-
+stage ("Sleep")
+{
+    steps{
+        sh ('sleep 60')
+    }
+}
 }
 stage ("Ansible apply")
 {
