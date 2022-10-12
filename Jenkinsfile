@@ -57,7 +57,13 @@ stage ("Sleep")
 stage ("Ansible apply")
 {
     steps{
-        ansiblePlaybook become: true, credentialsId: 'ssh_key', disableHostKeyChecking: true, forks: 5, installation: 'Ansible', inventory: '/var/lib/jenkins/workspace/webhook_terraform/Terraform/hosts.ini', playbook: '/var/lib/jenkins/workspace/webhook_terraform/Ansible/first_playbook.yaml'
+        ansiblePlaybook become: true, credentialsId: 'ssh_key', disableHostKeyChecking: true, forks: 5, installation: 'Ansible', inventory: '/var/lib/jenkins/workspace/webhook_terraform/Terraform/hosts.ini', playbook: '/var/lib/jenkins/workspace/webhook_terraform/Ansible/nginx.yaml'
+    }
+}
+stage ("Ansible sync site")
+{
+    steps{
+        ansiblePlaybook become: true, credentialsId: 'ssh_key', disableHostKeyChecking: true, forks: 5, installation: 'Ansible', inventory: '/var/lib/jenkins/workspace/webhook_terraform/Terraform/hosts.ini', playbook: '/var/lib/jenkins/workspace/webhook_terraform/Ansible/sync.yaml'
     }
 }
 stage ("terraform destroy approval")
