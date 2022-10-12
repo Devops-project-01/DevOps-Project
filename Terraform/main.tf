@@ -1,54 +1,22 @@
 terraform {
-  required_providers {
-    tls = {
-      source  = "hashicorp/tls"
-      version = "3.1.0"
-    }
+  backend "gcs" {
+    bucket = "terraform-remote-state-jt"
+    #  prefix      = "root\network-tfsate"
   }
 }
 
-provider "tls" {
-  // no config needed
-}
-
-resource "tls_private_key" "ssh" {
-  algorithm = "RSA"
-  rsa_bits  = 4096
-}
-
-resource "local_file" "ssh_private_key_pem" {
-  content         = tls_private_key.ssh.private_key_pem
-  filename        = "../../.ssh/google_compute_engine"
-  file_permission = "0600"
-}
-
-resource "local_file" "ssh_public_key_pem" {
-  content         = tls_private_key.ssh.public_key_openssh
-  filename        = "../../.ssh/google_compute_engine.pub"
-  file_permission = "0600"
-}
-terraform {
-  backend "gcs" {
-    bucket      = "terraform-remote-state-jt"
-  #  prefix      = "root\network-tfsate"
-    }
-}
-#provider "google" {
-#  project = "gcp-testo1"
-#  region  = "us-central1"
-#  zone    = "us-central1-c"
-#}
 
 #resource "google_storage_bucket" "tf-bucket" {
-  #project       = var.gcp_project
-  #name          = var.bucket-name
-  #location      = var.gcp_region
-  #force_destroy = true
-  #storage_class = var.storage-class
-  #versioning {
-  #  enabled = true
- # }
+#project       = var.gcp_project
+#name          = var.bucket-name
+#location      = var.gcp_region
+#force_destroy = true
+#storage_class = var.storage-class
+#versioning {
+#  enabled = true
+# }
 #}
+
 resource "google_project_service" "cloud_resource_manager" {
   service            = "cloudresourcemanager.googleapis.com"
   disable_on_destroy = false
@@ -75,7 +43,7 @@ resource "google_compute_instance" "vm_instance" {
   }
   metadata = {
     # ssh-keys = "${split("@", data.google_client_openid_userinfo.me.email)[0]}:${tls_private_key.ssh.public_key_openssh}"
-    ssh-keys = "root:${tls_private_key.ssh.public_key_openssh}"
+    ssh-keys = "root:${file(var.gce_ssh_pub_key_file)}"
   }
 
   network_interface {
@@ -98,7 +66,7 @@ resource "google_compute_instance" "vm_instance-2" {
   }
   metadata = {
     # ssh-keys = "${split("@", data.google_client_openid_userinfo.me.email)[0]}:${tls_private_key.ssh.public_ke>
-    ssh-keys = "root:${tls_private_key.ssh.public_key_openssh}"
+    ssh-keys = "root:${file(var.gce_ssh_pub_key_file)}"
   }
 
   network_interface {
@@ -113,7 +81,7 @@ resource "google_compute_instance" "vm_instance-2" {
 resource "google_compute_subnetwork" "network-1" {
   name          = "test-subnetwork"
   ip_cidr_range = "10.2.0.0/16"
-  region        = "us-central1"
+  region        = var.gcp_region
   network       = google_compute_network.custom-test.id
 }
 
@@ -143,9 +111,9 @@ resource "google_compute_network" "custom-test" {
 #}
 
 resource "local_file" "inventory" {
-  filename = "./../../inventory/hosts.ini"
-file_permission= "0644"  
-content  = <<EOF
+  filename        = "hosts.ini"
+  file_permission = "0644"
+  content         = <<EOF
 [webserver]
 ${google_compute_instance.vm_instance.network_interface.0.network_ip}
 localhost
