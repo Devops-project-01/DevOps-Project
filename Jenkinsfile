@@ -31,8 +31,14 @@ dir("Terraform") {
 }
 
 }
-
-stage ("terraform Action") {
+stage ("terraform apply approval")
+{
+    steps
+    {
+        input message: 'Do you want to apply ', ok: 'yes do it'
+    }
+}
+stage ("terraform Apply") {
 
 steps {
 dir("Terraform"){
