@@ -12,7 +12,8 @@ stages {
 stage('Checkout') {
 
 steps {
-checkout([$class: 'GitSCM', branches: [[name: '*/naman']], extensions: [], userRemoteConfigs: [[url:'https://github.com/Devops-project-01/DevOps-Project.git']]])
+    checkout GitSCM
+//checkout([$class: 'GitSCM', branches: [[name: '*/naman']], extensions: [], userRemoteConfigs: [[url:'https://github.com/Devops-project-01/DevOps-Project.git']]])
 }
 }
 
