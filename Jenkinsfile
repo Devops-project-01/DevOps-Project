@@ -49,6 +49,12 @@ sh ("terraform ${action} --auto-approve")
 }
 
 }
+stage ("Ansible apply")
+{
+    steps{
+        ansiblePlaybook become: true, credentialsId: 'ssh_key', disableHostKeyChecking: true, forks: 5, installation: 'Ansible', inventory: 'webhook_terraform/Terraform/hosts.ini', playbook: 'webhook_terraform/Ansible/first_playook.yml'
+    }
+}
 stage ("terraform destroy approval")
 {
     steps
