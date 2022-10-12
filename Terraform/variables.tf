@@ -16,3 +16,7 @@ variable "gce_ssh_pub_key_file" {
   type        = string
   description = "public key path"
 }
+variable "gcp_zone" {
+  type        = string
+  description = "GCP zone name"
+}
