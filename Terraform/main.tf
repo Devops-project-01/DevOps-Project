@@ -27,13 +27,28 @@ resource "local_file" "ssh_public_key_pem" {
   filename        = "../../.ssh/google_compute_engine.pub"
   file_permission = "0600"
 }
-
-provider "google" {
-  project = "gcp-testo1"
-  region  = "us-central1"
-  zone    = "us-central1-c"
+terraform {
+  backend "gcs" {
+    bucket      = "terraform-remote-state-jt"
+  #  prefix      = "root\network-tfsate"
+    }
 }
+#provider "google" {
+#  project = "gcp-testo1"
+#  region  = "us-central1"
+#  zone    = "us-central1-c"
+#}
 
+#resource "google_storage_bucket" "tf-bucket" {
+  #project       = var.gcp_project
+  #name          = var.bucket-name
+  #location      = var.gcp_region
+  #force_destroy = true
+  #storage_class = var.storage-class
+  #versioning {
+  #  enabled = true
+ # }
+#}
 resource "google_project_service" "cloud_resource_manager" {
   service            = "cloudresourcemanager.googleapis.com"
   disable_on_destroy = false
