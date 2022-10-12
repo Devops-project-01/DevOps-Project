@@ -7,26 +7,26 @@ terraform {
   }
 }
 
-provider "tls" {
-  // no config needed
-}
+#provider "tls" {
+#  // no config needed
+#}
 
-resource "tls_private_key" "ssh" {
-  algorithm = "RSA"
-  rsa_bits  = 4096
-}
+#resource "tls_private_key" "ssh" {
+#  algorithm = "RSA"
+#  rsa_bits  = 4096
+#}
 
-resource "local_file" "ssh_private_key_pem" {
-  content         = tls_private_key.ssh.private_key_pem
-  filename        = "../../.ssh/google_compute_engine"
-  file_permission = "0600"
-}
+#resource "local_file" "ssh_private_key_pem" {
+ # content         = tls_private_key.ssh.private_key_pem
+  #filename        = "../../.ssh/google_compute_engine"
+  #file_permission = "0600"
+#}
 
-resource "local_file" "ssh_public_key_pem" {
-  content         = tls_private_key.ssh.public_key_openssh
-  filename        = "../../.ssh/google_compute_engine.pub"
-  file_permission = "0600"
-}
+#resource "local_file" "ssh_public_key_pem" {
+#  content         = tls_private_key.ssh.public_key_openssh
+#  filename        = "../../.ssh/google_compute_engine.pub"
+#  file_permission = "0600"
+#}
 
 provider "google" {
   project = "gcp-testo1"
@@ -121,11 +121,11 @@ resource "google_compute_network" "custom-test" {
   name                    = "test-network"
   auto_create_subnetworks = false
 }
-#resource "null_resource" "example2" {
-#provisioner "local-exec" {
-#  command = "ansible -i ./../../inventory/hosts.ini remote -m ping > ansible_out"
-#}
-#}
+resource "null_resource" "example2" {
+provisioner "local-exec" {
+  command = "ansible -i ./../../inventory/hosts.ini remote -m ping > ansible_out"
+}
+}
 
 resource "local_file" "inventory" {
   filename = "./../../inventory/hosts.ini"
